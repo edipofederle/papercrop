@@ -14,7 +14,7 @@ module Papercrop
       # @param attachment_name [Symbol] Name of the desired attachment to crop
       # @param opts [Hash]
       def crop_attached_file(attachment_name, opts = {})
-        [:crop_x, :crop_y, :crop_w, :crop_h, :original_w, :original_h, :box_w, :aspect, :cropped_geometries].each do |a|
+        [:crop_x, :crop_y, :crop_w, :crop_h, :original_w, :original_h, :box_w, :aspect, :cropped_geometries, :min_size, :max_size].each do |a|
           attr_accessor :"#{attachment_name}_#{a}"
         end
 
@@ -28,6 +28,12 @@ module Papercrop
 
         send :define_method, :"#{attachment_name}_aspect" do
           opts[:aspect].first.to_f / opts[:aspect].last.to_f
+        end
+
+        [:min_size, :max_size].each do |a|
+          send :define_method, :"#{attachment_name}_#{a}" do
+            opts[a]
+          end
         end
 
         if respond_to? :attachment_definitions
